@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AssignTask">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:drawable/editbox_background"
+                android:fontFamily="@font/happy"
+                android:gravity="center"
+                android:text="Assign Task"
+                android:textColor="@color/colorblue"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:background="@drawable/border"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <Spinner
+                    android:id="@+id/select_emp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"></Spinner>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/happy"
+                        android:paddingLeft="5dp"
+                        android:text="Client Name:" />
+
+                    <EditText
+                        android:id="@+id/client_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/editbox_background"
+                        android:inputType="textPersonName" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/happy"
+                        android:paddingLeft="5dp"
+                        android:text="Conatct:" />
+
+                    <EditText
+                        android:id="@+id/client_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/editbox_background"
+                        android:inputType="textPersonName" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/happy"
+                        android:paddingLeft="5dp"
+                        android:text="Address:" />
+
+                    <EditText
+                        android:id="@+id/client_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@android:drawable/editbox_background"
+                        android:inputType="textPostalAddress" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/happy"
+                        android:paddingLeft="5dp"
+                        android:text="Meeting Time:" />
+
+                    <EditText
+                        android:id="@+id/client_meeting_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/editbox_background"
+                        android:focusable="false"
+                        android:hint="Time"
+                        android:inputType="time"
+                        android:onClick="selectTime" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/happy"
+                        android:paddingLeft="5dp"
+                        android:text="Remark:" />
+
+                    <EditText
+                        android:id="@+id/client_remark"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@android:drawable/editbox_background"
+                        android:inputType="text" />
+                </LinearLayout>
+
+                <com.rey.material.widget.Button
+                    android:id="@+id/assign_task"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/pink_style"
+                    android:fontFamily="@font/font_game"
+                    android:onClick="assign_task"
+                    android:text="Assign"
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <com.rey.material.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginRight="30dp"
+                app:fab_animDuration="50"
+                app:fab_iconSize="35dp"
+                app:fab_iconSrc="@drawable/ic_plus" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

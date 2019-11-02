@@ -3,6 +3,8 @@ package com.bits.cps;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.bits.cps.Helper.Routes;
+import com.bits.cps.Helper.SharedPreferencesWork;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -51,28 +53,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -85,15 +65,23 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_task) {
             Intent intent = new Intent(MainActivity.this, AssignTask.class);
             startActivity(intent);
+        } else if (id == R.id.show_task) {
+            Intent intent = new Intent(MainActivity.this, ShowTasktoAdmin.class);
+            startActivity(intent);
         } else if (id == R.id.nav_inbox) {
             Intent intent = new Intent(MainActivity.this, InboxActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_reports) {
-
+            Intent intent = new Intent(MainActivity.this, WebviewActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_logout) {
-
+            if (new SharedPreferencesWork(MainActivity.this).eraseData(Routes.sharedPrefForLogin)) {
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

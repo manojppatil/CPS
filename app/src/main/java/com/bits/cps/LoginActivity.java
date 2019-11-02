@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.AppCompatButton;
-
 import com.bits.cps.Helper.DialogBox;
 import com.bits.cps.Helper.L;
 import com.bits.cps.Helper.NetworkConnection;
@@ -29,6 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import am.appwise.components.ni.NoInternetDialog;
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
@@ -37,14 +36,21 @@ public class LoginActivity extends AppCompatActivity {
     Button button;
     EditText username, password;
     String user, pass;
+    NoInternetDialog noInternetDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(LoginActivity.this);
+        sharedPreferencesWork.checkForLogin();
+        noInternetDialog = new NoInternetDialog.Builder(LoginActivity.this).build();
+
         button = findViewById(R.id.login_button);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
     }
+
     public void signin(View view) {
         user = username.getText().toString();
         pass = password.getText().toString();
@@ -67,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             } else {
                 RequestParams params = new RequestParams();
-                params.add("email", user);
+                params.add("userid", user);
                 params.add("password", pass);
                 params.add("tbname", "user");
                 AsyncHttpClient client = new AsyncHttpClient();
@@ -91,24 +97,44 @@ public class LoginActivity extends AppCompatActivity {
                                 jo = new JSONObject(str);
                                 if (jo.getString("status").equals("success")) {
                                     HashMap hm = new HashMap();
-
+                                    hm.put("apikey", jo.getString("api_key"));
                                     hm.put("userid", user);
                                     hm.put("password", pass);
+                                    hm.put("status", "deactivate");
                                     hm.put("role", jo.getString("role"));
-                                    ;
+                                    hm.put("id", jo.getString("userid"));
+                                    hm.put("name", jo.getString("name"));
+
                                     new SharedPreferencesWork(LoginActivity.this).insertOrReplace(hm, Routes.sharedPrefForLogin);
 
                                     if (jo.getString("role").equals("admin")) {
                                         Intent admin = new Intent(LoginActivity.this, MainActivity.class);
                                         startActivity(admin);
+                                        finish();
                                         Toast.makeText(LoginActivity.this, "Admin Logged in", Toast.LENGTH_SHORT).show();
                                     }
 
                                     if (jo.getString("role").equals("employee")) {
                                         Intent employee = new Intent(LoginActivity.this, UserActivity.class);
                                         startActivity(employee);
+                                        finish();
                                         Toast.makeText(LoginActivity.this, "Employee Logged in", Toast.LENGTH_SHORT).show();
                                     }
+                                    if (jo.getString("role").equals("Team Leader")) {
+                                        Intent employee = new Intent(LoginActivity.this, PunchActivity.class);
+                                        employee.putExtra("role", "Team Leader");
+                                        startActivity(employee);
+                                        finish();
+                                        Toast.makeText(LoginActivity.this, "Punch Your Attendance Here", Toast.LENGTH_SHORT).show();
+                                    }
+                                    if (jo.getString("role").equals("Data Entry Operator")) {
+                                        Intent employee = new Intent(LoginActivity.this, PunchActivity.class);
+                                        employee.putExtra("role", "Data Entry Operator");
+                                        startActivity(employee);
+                                        finish();
+                                        Toast.makeText(LoginActivity.this, "Punch Your Attendance Here", Toast.LENGTH_SHORT).show();
+                                    }
+                                    finish();
                                 } else {
                                     new DialogBox(LoginActivity.this, jo.get("status_message").toString()).asyncDialogBox();
 
@@ -140,5 +166,11 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             new DialogBox(this, "Check your network connnection").asyncDialogBox();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        noInternetDialog.onDestroy();
     }
 }

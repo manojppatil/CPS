@@ -1,68 +1,213 @@
 package com.bits.cps;
 
-import android.graphics.Color;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.DatePicker;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.bits.cps.Adapter.FoldingCellListAdapter;
-import com.bits.cps.pojo.Item;
-import com.ramotion.foldingcell.FoldingCell;
+import com.bits.cps.Adapter.InboxAdapter;
+import com.bits.cps.Helper.DialogBox;
+import com.bits.cps.Helper.L;
+import com.bits.cps.Helper.Routes;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+
+import cz.msebera.android.httpclient.Header;
+import dmax.dialog.SpotsDialog;
 
 public class InboxActivity extends AppCompatActivity {
+    ArrayList arr = new ArrayList();
+    Context context;
+    private int inserted_id;
+    EditText inboxdate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox);
 
-        ListView theListView = findViewById(R.id.mainListView);
+        inboxdate = findViewById(R.id.inbox_date);
 
-        // prepare elements to display
-        final ArrayList<Item> items = Item.getTestingList();
+        RequestParams requestParams = new RequestParams();
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        asyncHttpClient.post(Routes.multipleTablesData, requestParams, new AsyncHttpResponseHandler() {
+            AlertDialog dialog = new SpotsDialog(InboxActivity.this, R.style.Custom);
 
-        // add custom btn handler to first list item
-        items.get(0).setRequestBtnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show();
+            public void onStart() {
+                dialog.show();
             }
-        });
 
-        // create custom adapter that holds elements and their state (we need hold a id's of unfolded elements for reusable elements)
-        final FoldingCellListAdapter adapter = new FoldingCellListAdapter(this, items);
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 
-        // add default btn handler for each request btn on each item if custom handler not found
-        adapter.setDefaultRequestBtnClickListener(new View.OnClickListener() {
+                dialog.dismiss();
+                String str = new String(responseBody);
+//                str = str.replace("<br>", "\n");
+                L.L(str+"");
+                JSONArray jr = null;
+                JSONObject jo = null;
+                try {
+                    if (statusCode == 200) {
+                        try {
+                            jr = new JSONArray(str);
+                            for (int i = 0; i < jr.length(); i++) {
+                                jo = jr.getJSONObject(i);
+                                HashMap hashMap = new HashMap();
+                                if (jo != null) {
+                                    hashMap.put("id", jo.get("id").toString());
+                                    hashMap.put("name", jo.get("name").toString());
+                                    hashMap.put("ctotal", jo.get("ctotal").toString());
+                                    hashMap.put("ptotal", jo.get("ptotal").toString());
+                                    hashMap.put("login_time", jo.get("login_time").toString());
+                                    hashMap.put("logout_time", jo.get("logout_time").toString());
+                                }
+                                arr.add(hashMap);
+                            }
+                            InboxAdapter inadapter = new InboxAdapter(arr, InboxActivity.this);
+                            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.inbox_recycler);
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+                            recyclerView.setAdapter(inadapter);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        new DialogBox(InboxActivity.this, str).asyncDialogBox();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "DEFAULT HANDLER FOR ALL BUTTONS", Toast.LENGTH_SHORT).show();
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
+                    error) {
+                new DialogBox(InboxActivity.this, responseBody.toString());
             }
-        });
 
-        // set elements to adapter
-        theListView.setAdapter(adapter);
-
-        // set on click event listener to list view
-        theListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, final int pos, long l) {
-                // toggle clicked cell state
-                final FoldingCell fc = (FoldingCell) findViewById(R.id.folding_cell);
-                fc.initialize(700, Color.DKGRAY, 6);
-                fc.initialize(30, 700, Color.DKGRAY, 6);
-                fc.toggle(false);
-                // register in adapter that state for selected cell is toggled
-                adapter.registerToggle(pos);
-
+            public void onRetry(int retryNo) {
+                dialog = ProgressDialog.show(InboxActivity.this, "none to say",
+                        "Saving.Please wait...", true);
             }
+
         });
 
     }
 
+    public void InboxselectDate(View view) {
+        final EditText date = (EditText) view;
+        // Get Current Date
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+
+                        date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
+    }
+
+    public void sendDate(View view){
+        String inbox_date = inboxdate.getText().toString();
+        RequestParams requestParams = new RequestParams();
+        requestParams.add("search_date",inbox_date);
+
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        asyncHttpClient.post(Routes.multipleTablesData, requestParams, new AsyncHttpResponseHandler() {
+            AlertDialog dialog = new SpotsDialog(InboxActivity.this, R.style.Custom);
+
+            @Override
+            public void onStart() {
+                dialog.show();
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                dialog.dismiss();
+                String str = new String(responseBody);
+//                str = str.replace("<br>", "\n");
+                L.L(str+"");
+                JSONArray jr = null;
+                JSONObject jo = null;
+                try {
+                    if (statusCode == 200) {
+                        try {
+                            jr = new JSONArray(str);
+                            for (int i = 0; i < jr.length(); i++) {
+                                jo = jr.getJSONObject(i);
+                                HashMap hashMap = new HashMap();
+                                if (jo != null) {
+                                    hashMap.put("id", jo.get("id").toString());
+                                    hashMap.put("name", jo.get("name").toString());
+                                    hashMap.put("ctotal", jo.get("ctotal").toString());
+                                    hashMap.put("ptotal", jo.get("ptotal").toString());
+                                    hashMap.put("login_time", jo.get("login_time").toString());
+                                    hashMap.put("logout_time", jo.get("logout_time").toString());
+                                }
+                                arr.add(hashMap);
+                            }
+                            InboxAdapter inadapter = new InboxAdapter(arr, InboxActivity.this);
+                            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.inbox_recycler);
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+                            recyclerView.setAdapter(inadapter);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        new DialogBox(InboxActivity.this, str).asyncDialogBox();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
+                    error) {
+                new DialogBox(InboxActivity.this, responseBody.toString());
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                dialog = ProgressDialog.show(InboxActivity.this, "none to say",
+                        "Saving.Please wait...", true);
+            }
+
+        });
+
+    }
 }

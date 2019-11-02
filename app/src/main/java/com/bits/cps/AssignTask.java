@@ -20,20 +20,25 @@ import com.bits.cps.Helper.Routes;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.rahman.dialog.Activity.SmartDialog;
+import com.rahman.dialog.ListenerCallBack.SmartDialogClickListener;
+import com.rahman.dialog.Utilities.SmartDialogBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
 public class AssignTask extends AppCompatActivity {
     Spinner emp_spinner;
-    EditText client_name, client_contact, client_address, client_meeting_time, client_remark;
+    EditText client_name, client_contact, client_email, client_address, client_meeting_time, client_amount, client_remark;
     private int inserted_id;
     Context context;
 
@@ -45,8 +50,10 @@ public class AssignTask extends AppCompatActivity {
         emp_spinner = findViewById(R.id.select_emp);
         client_name = findViewById(R.id.client_name);
         client_contact = findViewById(R.id.client_contact);
+        client_email = findViewById(R.id.client_email);
         client_address = findViewById(R.id.client_address);
         client_meeting_time = findViewById(R.id.client_meeting_time);
+        client_amount = findViewById(R.id.client_amount);
         client_remark = findViewById(R.id.client_remark);
         getEmpID();
     }
@@ -55,18 +62,24 @@ public class AssignTask extends AppCompatActivity {
         String Select_emp = emp_spinner.getSelectedItem().toString();
         String Name = client_name.getText().toString();
         String Contact = client_contact.getText().toString();
+        String Email = client_email.getText().toString();
         String Address = client_address.getText().toString();
         String Meeting_time = client_meeting_time.getText().toString();
+        String Amount = client_amount.getText().toString();
         String Remark = client_remark.getText().toString();
+        final String array[] = Select_emp.split("\\:");
 
         RequestParams requestParams = new RequestParams();
-        requestParams.add("user_id", Select_emp);
+        requestParams.add("user_id", array[0]);
+        requestParams.add("user_name", array[1]);
         requestParams.add("client_name", Name);
-        requestParams.add("contact", Contact);
-        requestParams.add("address", Address);
+        requestParams.add("client_contact", Contact);
+        requestParams.add("client_email", Email);
+        requestParams.add("client_address", Address);
         requestParams.add("meeting_time", Meeting_time);
+        requestParams.add("amount", Amount);
         requestParams.add("remark", Remark);
-        requestParams.add("tbname", "Assigned_Task");
+        requestParams.add("tbname", "task");
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         asyncHttpClient.post(Routes.insert2, requestParams, new AsyncHttpResponseHandler() {
@@ -92,10 +105,25 @@ public class AssignTask extends AppCompatActivity {
                             jo = new JSONObject(str);
                             if (jo.getString("status").equals("success")) {
                                 inserted_id = Integer.parseInt(jo.getString("recentinsertedid"));
+                                new SmartDialogBuilder(AssignTask.this)
+                                        .setTitle("Success")
+                                        .setSubTitle("Task is Successfully assigned to Employee:"+array[1])
+                                        .setCancalable(false)
+                                        .setNegativeButtonHide(true) //hide cancel button
+                                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                                            @Override
+                                            public void onClick(SmartDialog smartDialog) {
+                                                Toast.makeText(AssignTask.this, "Thank you", Toast.LENGTH_SHORT).show();
+                                                smartDialog.dismiss();
+                                            }
+                                        }).build().show();
+                                Toast.makeText(AssignTask.this, "Successfully Assigned", Toast.LENGTH_SHORT).show();
                                 client_name.setText("");
                                 client_address.setText("");
                                 client_contact.setText("");
+                                client_email.setText("");
                                 client_meeting_time.setText("");
+                                client_amount.setText("");
                                 client_remark.setText("");
 
                             } else {
@@ -134,14 +162,14 @@ public class AssignTask extends AppCompatActivity {
                 String string = new String(responseBody);
                 JSONArray jr = null;
                 JSONObject jo = null;
-                L.L(string+"---------------");
+                L.L(string + "---------------");
                 ArrayList arrayList = new ArrayList();
                 if (statusCode == 200) {
                     try {
                         jr = new JSONArray(string);
                         for (int i = 0; i < jr.length(); i++) {
                             jo = jr.getJSONObject(i);
-                            arrayList.add(jo.getString("name"));
+                            arrayList.add(jo.getInt("id") + ": " + jo.getString("name"));
                         }
                         ArrayAdapter<String> arrayAdapterid = new ArrayAdapter<String>(AssignTask.this, android.R.layout.simple_spinner_item, arrayList);
                         arrayAdapterid.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -159,14 +187,15 @@ public class AssignTask extends AppCompatActivity {
         });
 
     }
+
     public void selectTime(View view) {
 
 
         final EditText time = (EditText) view;
         // Get Current Time
         final Calendar c = Calendar.getInstance();
-        int mHour = c.get(Calendar.HOUR_OF_DAY);
-        int mMinute = c.get(Calendar.MINUTE);
+        final int mHour = c.get(Calendar.HOUR_OF_DAY);
+        final int mMinute = c.get(Calendar.MINUTE);
 
         // Launch Time Picker Dialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
@@ -175,7 +204,10 @@ public class AssignTask extends AppCompatActivity {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        time.setText(hourOfDay + ":" + minute);
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm aa");
+                        String formattedDate = dateFormat.format(new Date()).toString();
+                        System.out.println(formattedDate);
+                        time.setText(formattedDate+"");
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();

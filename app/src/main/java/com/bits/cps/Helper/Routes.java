@@ -2,7 +2,7 @@ package com.bits.cps.Helper;
 
 public class Routes {
 //    ``````````````````` ``````````````````````````````domain````````````````````````
-    public static final String domain = "http://cpsgroups.in/CPS/";
+    public static final String domain = "http://cpsgroups.in/";
     //    -----------------------------------------------insideroot----------------------------------------------
     public static final String controller = domain+"controller/api1/";
     public static final String img = domain+"img/";
@@ -14,9 +14,12 @@ public class Routes {
     //   ---------------------------------------------controller/app/api1/files------------------------------
     public static final String insert = user + "insert.php";
     public static final String insert2 = common + "insert2.php";
+    public static final String insert3 = common + "insert.php";
     public static final String update= common + "UpdateData.php";
     public static final String selectAll = common + "selectAll.php";
+    public static final String selectAllByQuery = common + "selectAllByQuery.php";
     public static final String selectAllByColumn = common + "selectAllByColumn.php";
+    public static final String multipleTablesData = common + "multipleTablesData.php";
     public static final String selectOne = common + "selectOne.php";
     public static final String selectOneByColumn = common + "selectOneByColumn.php";
     public static final String selectAllbyDate = common + "selectAllbyDate.php";

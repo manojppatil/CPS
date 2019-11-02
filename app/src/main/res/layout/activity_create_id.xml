@@ -18,37 +18,39 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="70dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="@drawable/head_style"
                 android:fontFamily="@font/happy"
+                android:gravity="center"
                 android:text="Create Employee ID"
                 android:textAlignment="center"
-                android:textColor="@color/colorblue"
-                android:textSize="20dp"
+                android:textColor="@android:color/white"
+                android:textSize="22dp"
                 android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:background="@drawable/border"
                 android:orientation="vertical"
-                android:layout_margin="10dp"
                 android:padding="15dp">
+
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_image_owner"
+                    android:id="@+id/profile_image_emp"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
-                    android:onClick="select_profile_photo"
+                    android:onClick="selectImage"
                     android:src="@drawable/prof2"
                     app:civ_border_color="#FF000000"
                     app:civ_border_width="2dp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -61,6 +63,7 @@
                         android:fontFamily="@font/happy"
                         android:paddingLeft="5dp"
                         android:text="Name:" />
+
 
                     <EditText
                         android:id="@+id/emp_name"
@@ -114,6 +117,78 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:text="Fix Login Time" />
+
+                        <EditText
+                            android:id="@+id/emp_login_time"
+                            android:onClick="selectTime"
+                            android:focusable="false"
+                            android:inputType="time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:drawable/editbox_background" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:text="Fix Logout Time" />
+
+                        <EditText
+                            android:id="@+id/emp_logout_time"
+                            android:layout_width="match_parent"
+                            android:onClick="selectTime"
+                            android:focusable="false"
+                            android:inputType="time"
+                            android:layout_height="wrap_content"
+                            android:background="@android:drawable/editbox_background" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/happy"
+                        android:paddingLeft="5dp"
+                        android:text="Role:" />
+
+                    <Spinner
+                        android:id="@+id/role_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:orientation="vertical">
 
@@ -128,6 +203,7 @@
                         android:id="@+id/emp_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:hint="Same will be your Login ID"
                         android:background="@android:drawable/editbox_background"
                         android:inputType="textEmailAddress" />
                 </LinearLayout>
@@ -160,8 +236,8 @@
                     android:layout_margin="20dp"
                     android:background="@drawable/pink_style"
                     android:fontFamily="@font/font_game"
-                    android:text="Create"
                     android:onClick="create_id"
+                    android:text="Create ID"
                     android:textColor="@android:color/white"
                     android:textSize="20dp"
                     android:textStyle="bold" />

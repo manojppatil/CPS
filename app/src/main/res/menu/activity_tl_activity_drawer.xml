@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/tl_profile"
+            android:icon="@drawable/ic_username"
+            android:title="@string/my_profile" />
+        <item
+            android:id="@+id/tl_assign_task"
+            android:icon="@drawable/ic_task"
+            android:title="@string/menu_gallery" />
+        <item
+            android:id="@+id/tl_show_task"
+            android:icon="@drawable/ic_showtask"
+            android:title="@string/menu_task" />
+        <!--<item-->
+            <!--android:id="@+id/nav_tools"-->
+            <!--android:icon="@drawable/ic_reports"-->
+            <!--android:title="@string/menu_tools" />-->
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/tl_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/menu_share" />
+
+        </menu>
+    </item>
+
+</menu>

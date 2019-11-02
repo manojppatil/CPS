@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/emp_profile"
+            android:icon="@drawable/ic_username"
+            android:title="@string/my_profile" />
+        <item
+            android:id="@+id/emp_assign_task"
+            android:icon="@drawable/ic_task"
+            android:title="@string/field_task" />
+        <item
+            android:id="@+id/emp_sro_task"
+            android:icon="@drawable/ic_reports"
+            android:title="@string/SRO_Task" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/emp_nav_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/menu_share" />
+        </menu>
+    </item>
+
+</menu>

@@ -2,11 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.0"
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.bits.cps"
         minSdkVersion 17
         targetSdkVersion 29
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -24,6 +25,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -37,6 +39,17 @@ dependencies {
     implementation 'com.ramotion.foldingcell:folding-cell:1.2.2'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.github.d-max:spots-dialog:0.4@aar'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.github.ViksaaSkool:AwesomeSplash:v1.0.0'
+    implementation 'com.github.TecOrb-Developers:SmartAlertDialog:v1.0'
+    implementation 'com.github.p32929:AndroidEasySQL-Library:1.4.0'
+    implementation 'am.appwise.components:NoInternetDialog:1.1.3'
+
+
+    implementation 'androidx.work:work-runtime:2.0.1'
+    implementation 'com.github.shaz-tech:EasyRuntimePermission:1.1'
+
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 
 
 }

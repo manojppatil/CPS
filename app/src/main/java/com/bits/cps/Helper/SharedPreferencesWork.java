@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.bits.cps.Activity_do;
 import com.bits.cps.LoginActivity;
 import com.bits.cps.MainActivity;
+import com.bits.cps.PunchActivity;
+import com.bits.cps.TL_activity;
+import com.bits.cps.UserActivity;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,30 +65,45 @@ public class SharedPreferencesWork {
         String role = "";
         String id = "";
         ;
-        HashMap hashMap = checkAndReturn(Routes.sharedPrefForLogin, "id");
-        if (hashMap.containsKey("id")) {
+        HashMap hashMap = checkAndReturn(Routes.sharedPrefForLogin, "userid");
+        if (hashMap.containsKey("userid")) {
             role = hashMap.get("role").toString();
-            id = hashMap.get("id").toString();
+            id = hashMap.get("userid").toString();
             if (hashMap.get("role") != null) {
                 role = hashMap.get("role").toString();
             }
 
 
-            if (!id.equals(null)) {
+            if (!id.equals(null) && role.equals("admin")) {
                 Intent homeIntent = new Intent(ctx, MainActivity.class);
-                homeIntent.putExtra("id", id);
-                homeIntent.putExtra("role", role);
+                homeIntent.putExtra("userid", id);
+                ctx.startActivity(homeIntent);
+
+            } else if (!id.equals(null) && role.equals("employee")) {
+                Intent homeIntent = new Intent(ctx, UserActivity.class);
+                homeIntent.putExtra("userid", id);
+                ctx.startActivity(homeIntent);
+
+            } else if (!id.equals(null) && role.equals("Team Leader")) {
+                Intent homeIntent = new Intent(ctx, PunchActivity.class);
+                homeIntent.putExtra("role","Team Leader");
+                homeIntent.putExtra("userid", id);
+                ctx.startActivity(homeIntent);
+
+            } else if (!id.equals(null) && role.equals("Data Entry Operator")) {
+                Intent homeIntent = new Intent(ctx, PunchActivity.class);
+                homeIntent.putExtra("role","Data Entry Operator");
+                homeIntent.putExtra("userid", id);
                 ctx.startActivity(homeIntent);
             }
-
         }
         return false;
     }
 
     public int checkExceptLogin() {
-        HashMap hashMap = checkAndReturn(Routes.sharedPrefForLogin, "id");
-        if (hashMap.containsKey("id")) {
-            String suserid = hashMap.get("id").toString();
+        HashMap hashMap = checkAndReturn(Routes.sharedPrefForLogin, "userid");
+        if (hashMap.containsKey("userid")) {
+            String suserid = hashMap.get("userid").toString();
             return Integer.parseInt(suserid.trim());
         } else {
             Intent intent = new Intent(ctx, LoginActivity.class);

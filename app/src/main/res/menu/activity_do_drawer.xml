@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/do_profile"
+            android:icon="@drawable/ic_username"
+            android:title="@string/my_profile" />
+        <item
+            android:id="@+id/do_stamp_duty"
+            android:icon="@drawable/ic_stamp_duty"
+            android:title="@string/stamp" />
+        <item
+            android:id="@+id/do_sro_receipt"
+            android:icon="@drawable/ic_sro"
+            android:title="@string/File_sro" />
+            </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/do_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/menu_share" />
+        </menu>
+    </item>
+
+</menu>

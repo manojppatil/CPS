@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="150dp"
+    android:layout_margin="10dp"
     android:baselineAligned="false"
     android:orientation="horizontal">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="155dp"
-        android:layout_weight="3"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:layout_weight="1"
         android:background="@color/colorblue"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -18,39 +19,30 @@
         android:paddingBottom="20dp">
 
         <TextView
-            android:id="@+id/title_price"
+            android:id="@+id/inbox_emp_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
+            android:text="21"
             android:textColor="@android:color/white"
             android:textSize="26sp" />
 
         <TextView
-            android:id="@+id/title_time_label"
+            android:id="@+id/inbox_emp_name"
+            android:text="Akhilesh Sharma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/title_date_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/title_time_label"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:textSize="16sp" />
 
 
     </RelativeLayout>
     <!-- RIGHT TITLE PART -->
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:id="@+id/relay2"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@android:color/white"
@@ -72,16 +64,25 @@
             android:src="@drawable/from_to_purple" />
 
         <TextView
-            android:id="@+id/title_from_address"
+            android:id="@+id/txt_login_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/title_from_to_dots"
+            android:layout_toEndOf="@id/title_from_to_dots"
+            android:gravity="center"
+            android:text="Login: " />
+
+        <TextView
+            android:id="@+id/inbox_login_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txt_login_time"
             android:layout_marginTop="-5dp"
-            android:layout_toEndOf="@+id/title_from_to_dots"
-            android:layout_toRightOf="@+id/title_from_to_dots"
+            android:layout_toEndOf="@+id/txt_login_time"
+            android:layout_toRightOf="@+id/txt_login_time"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:singleLine="true"
+            android:text="10:30"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
@@ -89,7 +90,7 @@
             android:id="@+id/title_from_to_dots_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@id/title_from_address"
+            android:layout_below="@id/inbox_login_time"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_toEndOf="@+id/title_from_to_dots"
@@ -97,72 +98,67 @@
             android:src="@color/colorpurple" />
 
         <TextView
-            android:id="@+id/title_to_address"
+            android:id="@+id/txt_logout_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/title_from_to_dots_divider"
             android:layout_toEndOf="@id/title_from_to_dots"
             android:layout_toRightOf="@id/title_from_to_dots"
+            android:text="Logout: " />
+
+        <TextView
+            android:id="@+id/inbox_logout_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_from_to_dots_divider"
+            android:layout_toEndOf="@id/txt_logout_time"
+            android:layout_toRightOf="@id/txt_logout_time"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:singleLine="true"
+            android:text="06:30"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
 
         <TextView
-            android:id="@+id/title_requests_count"
+            android:id="@+id/inbox_completed_task"
             style="@style/TitleBadgeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true" />
-
-        <TextView
-            style="@style/TitleBadgeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/title_requests_count"
-            android:layout_alignStart="@id/title_requests_count"
-            android:layout_alignLeft="@id/title_requests_count"
-            android:text="REQUESTS" />
-
-        <TextView
-            android:id="@+id/title_weight"
-            style="@style/TitleBadgeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="50 oz" />
+            android:text="11" />
 
         <TextView
             style="@style/TitleBadgeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/title_weight"
-            android:layout_alignStart="@id/title_weight"
-            android:layout_alignLeft="@id/title_weight"
-            android:text="WEIGHT" />
+            android:layout_above="@id/inbox_completed_task"
+            android:layout_alignStart="@id/inbox_completed_task"
+            android:layout_alignLeft="@id/inbox_completed_task"
+            android:text="Completed" />
 
         <TextView
-            android:id="@+id/title_pledge"
+            android:id="@+id/inbox_pending_task"
             style="@style/TitleBadgeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:text="10" />
 
         <TextView
             style="@style/TitleBadgeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/title_pledge"
-            android:layout_alignStart="@id/title_pledge"
-            android:layout_alignLeft="@id/title_pledge"
-            android:text="PLEDGE" />
+            android:layout_above="@id/inbox_pending_task"
+            android:layout_alignStart="@id/inbox_pending_task"
+            android:layout_alignLeft="@id/inbox_pending_task"
+            android:text="Pending" />
+
 
     </RelativeLayout>
+
 </LinearLayout>

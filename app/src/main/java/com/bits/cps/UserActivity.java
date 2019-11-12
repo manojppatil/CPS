@@ -3,7 +3,8 @@ package com.bits.cps;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Geocoder;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +12,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkInfo;
@@ -26,7 +27,6 @@ import com.bits.cps.Helper.SharedPreferencesWork;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.shaz.library.erp.RuntimePermissionHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,31 +46,43 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class UserActivity extends AppCompatActivity {
-    Button attendance, btn_stop;
-    String username, id, status;
-NoInternetDialog noInternetDialog;
-    Geocoder geocoder;
-    HashMap name, ssid, sstatus;
+    static Button attendance;
+    Button sign_in_again;
+    String username;
+    String id;
+    String status;
+    static String login_date;
+    HashMap name, ssid, sstatus, ssdate;
     Context context;
     private int inserted_id;
-    String currentDateandTime, currentDate;
-    String stringLatitude, stringLongitude, country, city, postalCode, addressLine;
+    String currentDateandTime;
+    static String currentDate;
+    NoInternetDialog noInternetDialog;
 
     private static final int PERMISSION_REQUEST_CODE = 200;
 
     private static final String TAG = "LocationUpdate";
     String addressLines;
+    static TextView tv_check_connection;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        tv_check_connection = findViewById(R.id.tv_check_connection);
         noInternetDialog = new NoInternetDialog.Builder(UserActivity.this).build();
+        attendance = findViewById(R.id.btn_id);
+        sign_in_again = findViewById(R.id.sign_in_again);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3a3dff")));
         SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(UserActivity.this);
         name = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "userid");
         ssid = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "id");
         sstatus = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, ("status"));
+        ssdate = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, ("login_date"));
+        login_date = ssdate.get("login_date").toString();
+        L.L(login_date+"------");
         username = name.get("userid").toString();
         id = ssid.get("id").toString();
         status = sstatus.get("status").toString();
@@ -82,16 +94,23 @@ NoInternetDialog noInternetDialog;
             ActivityCompat.requestPermissions(this,
                     new String[]{ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
         }
+        SimpleDateFormat cd = new SimpleDateFormat("yyyy-MM-dd");
+        currentDate = cd.format(new Date());
+        L.L(currentDate+"++++++++");
+        if (login_date.equals(currentDate)){
+            attendance.setVisibility(View.GONE);
+            sign_in_again.setVisibility(View.VISIBLE);
+            tv_check_connection.setVisibility(View.VISIBLE);
+            tv_check_connection.setText("You have Already PUNCH IN for today.");
+            tv_check_connection.setBackgroundColor(Color.RED);
+            tv_check_connection.setTextColor(Color.WHITE);
 
+        }
         try {
             if (isWorkScheduled(WorkManager.getInstance().getWorkInfosByTag(TAG).get())) {
-//                attendance.setText(getString(R.string.button_text_stop));
-//                tv_latitude.setText(getString(R.string.message_worker_running));
-//                tv_longitude.setText(getString(R.string.log_for_running));
+
             } else {
-//                attendance.setText(getString(R.string.button_text_start));
-//                tv_latitude.setText(getString(R.string.message_worker_stopped));
-//                tv_longitude.setText(getString(R.string.log_for_stopped));
+
             }
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -99,7 +118,6 @@ NoInternetDialog noInternetDialog;
             e.printStackTrace();
         }
 
-        attendance = findViewById(R.id.btn_id);
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,16 +162,15 @@ NoInternetDialog noInternetDialog;
     }
 
     private boolean checkLocationPermission() {
-        int result3 = ContextCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION);
-        int result4 = ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION);
+        int result3 = ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION);
+        int result4 = ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION);
         return result3 == PackageManager.PERMISSION_GRANTED &&
                 result4 == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        RuntimePermissionHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0) {
                 boolean coarseLocation = grantResults[0] == PackageManager.PERMISSION_GRANTED;
@@ -166,7 +183,6 @@ NoInternetDialog noInternetDialog;
             }
         }
     }
-
 
     private void punchAttendance() {
 
@@ -208,6 +224,7 @@ NoInternetDialog noInternetDialog;
                                 HashMap hashMap = new HashMap();
                                 hashMap.put("status", "active");
                                 hashMap.put("login_id", inserted_id);
+                                hashMap.put("login_date", currentDate);
                                 sharedPreferencesWork.insertOrReplace(hashMap, Routes.sharedPrefForLogin);
                                 Intent intent = new Intent(UserActivity.this, Employee_activity.class);
                                 intent.putExtra("login_id", inserted_id);
@@ -234,9 +251,25 @@ NoInternetDialog noInternetDialog;
             }
         });
     }
+
+    public void sign_in_again(View view){
+        Intent intent = new Intent(UserActivity.this,Employee_activity.class);
+        intent.putExtra("login_id", inserted_id);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
+        System.exit(0);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         noInternetDialog.onDestroy();
     }
+
+
 }

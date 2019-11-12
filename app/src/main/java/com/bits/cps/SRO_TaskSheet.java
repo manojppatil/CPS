@@ -11,7 +11,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,30 +34,27 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
-public class TaskSheet extends AppCompatActivity {
+public class SRO_TaskSheet extends AppCompatActivity {
     String id;
-    TextView show_name, show_add, show_contact, show_amount;
-    EditText remark;
+    TextView show_name, show_office, show_bank, show_amount;
     Spinner task_status;
     private int inserted_id;
     Context context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_sheet);
+        setContentView(R.layout.activity_sro__task_sheet);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3a3dff")));
         final Intent intent = getIntent();
         id = intent.getStringExtra("id");
         L.L(id + "---+++++++");
 
-        show_name = findViewById(R.id.show_name);
-        show_add = findViewById(R.id.show_add);
-        show_contact = findViewById(R.id.show_contact);
-        show_amount = findViewById(R.id.task_amount);
-        remark = findViewById(R.id.task_remark);
-        task_status = findViewById(R.id.task_status);
+        show_name = findViewById(R.id.show_sro_name);
+        show_office = findViewById(R.id.show_sro_office);
+        show_bank = findViewById(R.id.show_sro_bank);
+        show_amount = findViewById(R.id.sro_sheet_amount);
+        task_status = findViewById(R.id.sro_status);
 
         final RequestParams requestParams = new RequestParams();
         requestParams.add("id", id);
@@ -66,7 +62,7 @@ public class TaskSheet extends AppCompatActivity {
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         asyncHttpClient.post(Routes.selectOne, requestParams, new AsyncHttpResponseHandler() {
-            AlertDialog dialog = new SpotsDialog(TaskSheet.this, R.style.Custom);
+            AlertDialog dialog = new SpotsDialog(SRO_TaskSheet.this, R.style.Custom);
 
             @Override
             public void onStart() {
@@ -88,9 +84,9 @@ public class TaskSheet extends AppCompatActivity {
                             jo1 = jr1.getJSONObject(0);
 
                             show_name.setText(jo1.getString("client_name"));
-                            show_add.setText(jo1.getString("client_address"));
-                            show_contact.setText(jo1.getString("client_contact"));
-                            show_amount.setText(jo1.getString("amount"));
+                            show_office.setText(jo1.getString("SRO_office"));
+                            show_bank.setText(jo1.getString("bank_name"));
+                            show_amount.setText(jo1.getString("SRO_payment"));
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -98,7 +94,7 @@ public class TaskSheet extends AppCompatActivity {
 
 
                     } else {
-                        new DialogBox(TaskSheet.this, str).asyncDialogBox();
+                        new DialogBox(SRO_TaskSheet.this, str).asyncDialogBox();
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -108,7 +104,7 @@ public class TaskSheet extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                new SmartDialogBuilder(TaskSheet.this)
+                new SmartDialogBuilder(SRO_TaskSheet.this)
                         .setTitle("Please Retry...")
                         .setSubTitle("Make sure your device has an active Internet Connection.")
                         .setCancalable(false)
@@ -116,9 +112,9 @@ public class TaskSheet extends AppCompatActivity {
                         .setPositiveButton("OK", new SmartDialogClickListener() {
                             @Override
                             public void onClick(SmartDialog smartDialog) {
-                                smartDialog.dismiss();
-                                Intent intent1 = new Intent(TaskSheet.this,ShowAssignTaskByUser.class);
+                                Intent intent1 = new Intent(SRO_TaskSheet.this,ShowAssignTaskByUser.class);
                                 startActivity(intent1);
+                                smartDialog.dismiss();
                             }
                         }).build().show();
             }
@@ -135,19 +131,17 @@ public class TaskSheet extends AppCompatActivity {
         task_status.setAdapter(arrayAdapter1);
     }
 
-    public void task_sheet(View view) {
-        String Remark = remark.getText().toString();
+    public void sro_task_sheet(View view) {
         String status = task_status.getSelectedItem().toString();
 
         RequestParams requestParams = new RequestParams();
-        requestParams.add("remark", Remark);
-        requestParams.add("status", status);
+        requestParams.add("sro_status", status);
         requestParams.add("id", id);
         requestParams.add("tbname", "task");
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         asyncHttpClient.post(Routes.update, requestParams, new AsyncHttpResponseHandler() {
-            AlertDialog dialog = new SpotsDialog(TaskSheet.this, R.style.Custom);
+            AlertDialog dialog = new SpotsDialog(SRO_TaskSheet.this, R.style.Custom);
 
             @Override
             public void onStart() {
@@ -169,7 +163,7 @@ public class TaskSheet extends AppCompatActivity {
                             jo = new JSONObject(str);
                             if (jo.getString("status").equals("success")) {
                                 inserted_id = Integer.parseInt(jo.getString("recentinsertedid"));
-                                new SmartDialogBuilder(TaskSheet.this)
+                                new SmartDialogBuilder(SRO_TaskSheet.this)
                                         .setTitle("Success")
                                         .setSubTitle("Task is Updated Successfully.")
                                         .setCancalable(false)
@@ -177,10 +171,10 @@ public class TaskSheet extends AppCompatActivity {
                                         .setPositiveButton("OK", new SmartDialogClickListener() {
                                             @Override
                                             public void onClick(SmartDialog smartDialog) {
-                                                Intent intent = new Intent(TaskSheet.this,ShowAssignTaskByUser.class);
+                                                Intent intent = new Intent(SRO_TaskSheet.this,ShowSRO_task.class);
                                                 startActivity(intent);
                                                 finish();
-                                                Toast.makeText(TaskSheet.this, "Thank you", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SRO_TaskSheet.this, "Thank you", Toast.LENGTH_SHORT).show();
                                                 smartDialog.dismiss();
                                             }
                                         }).build().show();
@@ -188,7 +182,7 @@ public class TaskSheet extends AppCompatActivity {
 
                             } else {
                                 Toast.makeText(context, "Data not inserted " + jo.getString("status"), Toast.LENGTH_SHORT).show();
-                                new DialogBox(TaskSheet.this, jo.get("message").toString()).asyncDialogBox();
+                                new DialogBox(SRO_TaskSheet.this, jo.get("message").toString()).asyncDialogBox();
 
                             }
                         } catch (JSONException e) {
@@ -197,7 +191,7 @@ public class TaskSheet extends AppCompatActivity {
 
                     } else {
                         L.L(statusCode + str);
-                        new DialogBox(TaskSheet.this, str).asyncDialogBox();
+                        new DialogBox(SRO_TaskSheet.this, str).asyncDialogBox();
                     }
                 } catch (Exception ex) {
                     L.L(ex.toString());
@@ -207,7 +201,7 @@ public class TaskSheet extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                new SmartDialogBuilder(TaskSheet.this)
+                new SmartDialogBuilder(SRO_TaskSheet.this)
                         .setTitle("Please Retry...")
                         .setSubTitle("Make sure your device has an active Internet Connection.")
                         .setCancalable(false)

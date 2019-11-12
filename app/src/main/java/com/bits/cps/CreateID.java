@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,6 +21,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bits.cps.Helper.DialogBox;
@@ -39,10 +42,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -57,13 +58,15 @@ public class CreateID extends AppCompatActivity {
     Uri imageuri;
     CircleImageView emp_profile;
     RequestParams requestParams = new RequestParams();
+    String format;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_id);
         setTitle("Create Employee ID");
-
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3a3dff")));
         emp_name = findViewById(R.id.emp_name);
         emp_contact = findViewById(R.id.emp_contact);
         emp_address = findViewById(R.id.emp_address);
@@ -75,9 +78,9 @@ public class CreateID extends AppCompatActivity {
         role = findViewById(R.id.role_spinner);
 
         ArrayList<String> arrayList1 = new ArrayList<>();
-        arrayList1.add("Team Leader");
-        arrayList1.add("Field Executive");
-        arrayList1.add("Data Entry Operator");
+        arrayList1.add("team_leader");
+        arrayList1.add("employee");
+        arrayList1.add("data_operator");
 
         ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrayList1);
         arrayAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -170,15 +173,24 @@ public class CreateID extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                new SmartDialogBuilder(CreateID.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                smartDialog.dismiss();
+                                dialog.dismiss();
+                            }
+                        }).build().show();
             }
         });
 
     }
 
     public void selectTime(View view) {
-
-
         final EditText time = (EditText) view;
         // Get Current Time
         final Calendar c = Calendar.getInstance();
@@ -187,14 +199,21 @@ public class CreateID extends AppCompatActivity {
         // Launch Time Picker Dialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
-
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm aa");
-                        String formattedDate = dateFormat.format(new Date()).toString();
-                        System.out.println(formattedDate);
-                        time.setText(formattedDate+"");
+                        if (hourOfDay == 0) {
+                            hourOfDay += 12;
+                            format = "AM";
+                        } else if (hourOfDay == 12) {
+                            format = "PM";
+                        } else if (hourOfDay > 12) {
+                            hourOfDay -= 12;
+                            format = "PM";
+                        } else {
+                            format = "AM";
+                        }
+                        time.setText(hourOfDay + ":" + minute + format);
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();

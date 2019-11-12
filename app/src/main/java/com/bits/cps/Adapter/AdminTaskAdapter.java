@@ -38,7 +38,7 @@ public class AdminTaskAdapter extends RecyclerView.Adapter<AdminTaskAdapter.View
     @Override
     public void onBindViewHolder(@NonNull AdminTaskAdapter.ViewHolder viewHolder, int position) {
         hm = (HashMap) items.get(position);
-//        final String id = hm.get("id").toString();
+        final String id = hm.get("id").toString();
 //        viewHolder.id.setText(id);
         final String name = hm.get("name").toString();
         viewHolder.name.setText(name);
@@ -50,7 +50,17 @@ public class AdminTaskAdapter extends RecyclerView.Adapter<AdminTaskAdapter.View
         viewHolder.emp_name.setText(uname);
         viewHolder.meeting_time.setText(hm.get("meeting_time").toString());
         viewHolder.remark.setText(hm.get("amount").toString());
-
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, TaskSheet.class);
+                intent.putExtra("id", id);
+                intent.putExtra("name", name);
+                intent.putExtra("add", add);
+                intent.putExtra("contact", mob);
+                context.startActivity(intent);
+            }
+        });
         viewHolder.itemView.setTag(hm);
     }
 

@@ -15,14 +15,14 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="270dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
+        android:background="@android:color/white"
         android:fitsSystemWindows="true"
-        android:background="@color/cardview_shadow_start_color"
         app:headerLayout="@layout/nav_header_tl_activity"
+        app:itemIconTint="@color/darkgrey"
+        app:itemTextColor="@android:color/black"
         app:menu="@menu/activity_tl_activity_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -102,22 +102,6 @@
                     android:textSize="19dp" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Status:" />
-
-                <Spinner
-                    android:id="@+id/stampduty_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></Spinner>
-            </LinearLayout>
 
             <Button
                 android:id="@+id/stamp_button"
@@ -126,8 +110,8 @@
                 android:layout_margin="20dp"
                 android:background="@drawable/pink_style"
                 android:fontFamily="@font/font_game"
-                android:text="Submit"
                 android:onClick="stamp_duty"
+                android:text="Submit"
                 android:textColor="@android:color/white"
                 android:textSize="20dp" />
         </LinearLayout>

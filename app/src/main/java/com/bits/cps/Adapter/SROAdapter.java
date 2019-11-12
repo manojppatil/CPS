@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bits.cps.R;
-import com.bits.cps.TaskSheet;
+import com.bits.cps.SRO_TaskSheet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class SROAdapter extends RecyclerView.Adapter<SROAdapter.ViewHolder> {
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, TaskSheet.class);
+                Intent intent = new Intent(context, SRO_TaskSheet.class);
                 intent.putExtra("id", id);
                 intent.putExtra("name", name);
                 intent.putExtra("add", add);

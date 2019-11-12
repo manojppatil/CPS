@@ -5,13 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.bits.cps.Adapter.SROAdapter;
 import com.bits.cps.Helper.DialogBox;
 import com.bits.cps.Helper.L;
 import com.bits.cps.Helper.Routes;
 import com.bits.cps.Helper.SharedPreferencesWork;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;
 
@@ -35,6 +32,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -45,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import am.appwise.components.ni.NoInternetDialog;
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
@@ -56,6 +55,9 @@ public class Employee_activity extends AppCompatActivity
     String addressLines;
     String login_id;
     HashMap loginid;
+    NoInternetDialog noInternetDialog;
+    HashMap ssname, ssemail;
+    String username, useremail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,13 +65,21 @@ public class Employee_activity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("CPS Employee");
-
+        noInternetDialog = new NoInternetDialog.Builder(Employee_activity.this).build();
         SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(Employee_activity.this);
         loginid = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "login_id");
         login_id = loginid.get("login_id").toString();
-
+        ssname = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "name");
+        ssemail = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "userid");
+        username = ssname.get("name").toString();
+        useremail = ssemail.get("userid").toString();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.nav_emp_profile);
+        txtProfileName.setText(username);
+        TextView txtUseremail = navigationView.getHeaderView(0).findViewById(R.id.nav_emp_email);
+        txtUseremail.setText(useremail);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -87,7 +97,11 @@ public class Employee_activity extends AppCompatActivity
             // Ask user to enable GPS/network in settings
             gpsTracker.showSettingsAlert();
         }
+
+
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -149,7 +163,7 @@ public class Employee_activity extends AppCompatActivity
                                         inserted_id = Integer.parseInt(jo.getString("recentinsertedid"));
                                         new SmartDialogBuilder(Employee_activity.this)
                                                 .setTitle("Thank You")
-                                                .setSubTitle("Have a Good night.")
+                                                .setSubTitle("You are Succesfully Logged out.")
                                                 .setCancalable(false)
                                                 .setNegativeButtonHide(true) //hide cancel button
                                                 .setPositiveButton("OK", new SmartDialogClickListener() {
@@ -189,7 +203,18 @@ public class Employee_activity extends AppCompatActivity
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                        new SmartDialogBuilder(Employee_activity.this)
+                                .setTitle("Please Retry...")
+                                .setSubTitle("Make sure your device has an active Internet Connection.")
+                                .setCancalable(false)
+                                .setNegativeButtonHide(true) //hide cancel button
+                                .setPositiveButton("OK", new SmartDialogClickListener() {
+                                    @Override
+                                    public void onClick(SmartDialog smartDialog) {
+                                        smartDialog.dismiss();
+                                        dialog.dismiss();
+                                    }
+                                }).build().show();
                     }
                 });
 
@@ -226,5 +251,11 @@ public class Employee_activity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        noInternetDialog.onDestroy();
     }
 }

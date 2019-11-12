@@ -9,8 +9,6 @@ import com.bits.cps.Helper.DialogBox;
 import com.bits.cps.Helper.L;
 import com.bits.cps.Helper.Routes;
 import com.bits.cps.Helper.SharedPreferencesWork;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;
 
@@ -34,6 +32,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -44,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import am.appwise.components.ni.NoInternetDialog;
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
@@ -55,18 +55,35 @@ public class TL_activity extends AppCompatActivity
     String login_id;
     private int inserted_id;
     Context context;
+    NoInternetDialog noInternetDialog;
+    String role;
+    HashMap ssname, ssemail;
+    String username, useremail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tl_activity);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Intent roleintent = getIntent();
+        role = roleintent.getStringExtra("role");
+        L.L(role + "+++++++++++role");
         setTitle("CPS Team Leader");
+        noInternetDialog = new NoInternetDialog.Builder(TL_activity.this).build();
         SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(TL_activity.this);
         loginid = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "login_id");
         login_id = loginid.get("login_id").toString();
+        ssname = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "name");
+        ssemail = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "userid");
+        username = ssname.get("name").toString();
+        useremail = ssemail.get("userid").toString();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.nav_tl_profile);
+        txtProfileName.setText(username);
+        TextView txtUseremail = navigationView.getHeaderView(0).findViewById(R.id.nav_tl_email);
+        txtUseremail.setText(useremail);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -105,8 +122,15 @@ public class TL_activity extends AppCompatActivity
             Intent intent = new Intent(TL_activity.this, AssignTask.class);
             startActivity(intent);
         } else if (id == R.id.tl_show_task) {
-            Intent intent = new Intent(TL_activity.this, ShowTasktoAdmin.class);
+            Intent intent = new Intent(TL_activity.this, ShoeTasktoTL.class);
             startActivity(intent);
+        } else if (id == R.id.tl_stamp_duty) {
+            Intent intent = new Intent(TL_activity.this, Stamp_duty.class);
+            startActivity(intent);
+        } else if (id == R.id.tl_sro_receipt) {
+            Intent intent = new Intent(TL_activity.this, SRO_receipt.class);
+            startActivity(intent);
+
         } else if (id == R.id.tl_logout) {
             if (new SharedPreferencesWork(TL_activity.this).eraseData(Routes.sharedPrefForLogin)) {
                 Intent intent = new Intent(this, LoginActivity.class);
@@ -168,7 +192,7 @@ public class TL_activity extends AppCompatActivity
                                         inserted_id = Integer.parseInt(jo.getString("recentinsertedid"));
                                         new SmartDialogBuilder(TL_activity.this)
                                                 .setTitle("Thank You")
-                                                .setSubTitle("Have a Good night.")
+                                                .setSubTitle("You are Succesfully Logged out.")
                                                 .setCancalable(false)
                                                 .setNegativeButtonHide(true) //hide cancel button
                                                 .setPositiveButton("OK", new SmartDialogClickListener() {
@@ -179,6 +203,7 @@ public class TL_activity extends AppCompatActivity
                                                         hashMap.put("status", "deactive");
                                                         sharedPreferencesWork.insertOrReplace(hashMap, Routes.sharedPrefForLogin);
                                                         Intent intent = new Intent(TL_activity.this, PunchActivity.class);
+                                                        intent.putExtra("role", "Team Leader");
                                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                         startActivity(intent);
                                                         finish();
@@ -208,12 +233,29 @@ public class TL_activity extends AppCompatActivity
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                        new SmartDialogBuilder(TL_activity.this)
+                                .setTitle("Please Retry...")
+                                .setSubTitle("Make sure your device has an active Internet Connection.")
+                                .setCancalable(false)
+                                .setNegativeButtonHide(true) //hide cancel button
+                                .setPositiveButton("OK", new SmartDialogClickListener() {
+                                    @Override
+                                    public void onClick(SmartDialog smartDialog) {
+                                        smartDialog.dismiss();
+                                        dialog.dismiss();
+                                    }
+                                }).build().show();
                     }
                 });
 
             }
         });
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        noInternetDialog.onDestroy();
     }
 }

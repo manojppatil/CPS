@@ -16,7 +16,7 @@
         <EditText
             android:id="@+id/inbox_date"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:background="@android:drawable/editbox_background"
@@ -26,10 +26,10 @@
 
         <Button
             android:id="@+id/btn_inbox_date"
-            android:layout_margin="10dp"
-            android:background="@drawable/job"
-            android:layout_width="60dp"
-            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic_search_black_24dp"
+            android:layout_width="30dp"
+            android:layout_height="35dp"
             android:onClick="sendDate" />
     </LinearLayout>
 

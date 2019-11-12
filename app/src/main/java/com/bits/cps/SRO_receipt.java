@@ -1,10 +1,13 @@
 package com.bits.cps;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -50,7 +53,10 @@ public class SRO_receipt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sro_receipt);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#34eb49")));
         setTitle("File SRO Receipt");
+        sro_cust_name = findViewById(R.id.sro_cust_name);
         RequestParams requestParams = new RequestParams();
         requestParams.add("tbname", "task");
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
@@ -85,7 +91,7 @@ public class SRO_receipt extends AppCompatActivity {
         });
         sro_emp = findViewById(R.id.sro_emp_name);
         sro_date = findViewById(R.id.sro_date);
-        sro_cust_name = findViewById(R.id.sro_cust_name);
+
         sro_cust_name.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
@@ -115,7 +121,7 @@ public class SRO_receipt extends AppCompatActivity {
 
         RequestParams requestParams = new RequestParams();
         requestParams.add("SRO_date", Sro_date);
-        requestParams.add("emp_name", array1[0]);
+        requestParams.add("emp_name", array1[0]+array1[1]);
         requestParams.add("cust_name", array[1]);
         requestParams.add("bank_name", Sro_bank);
         requestParams.add("SRO_office", Sro_office);
@@ -186,7 +192,17 @@ public class SRO_receipt extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                new SmartDialogBuilder(SRO_receipt.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                smartDialog.dismiss();
+                            }
+                        }).build().show();
             }
         });
     }
@@ -195,7 +211,7 @@ public class SRO_receipt extends AppCompatActivity {
         RequestParams requestParams = new RequestParams();
         requestParams.add("tbname", "user");
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        asyncHttpClient.post(Routes.selectAll, requestParams, new AsyncHttpResponseHandler() {
+        asyncHttpClient.post(Routes.selectAllEmployee, requestParams, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String string = new String(responseBody);
@@ -221,7 +237,17 @@ public class SRO_receipt extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                new SmartDialogBuilder(SRO_receipt.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                smartDialog.dismiss();
+                            }
+                        }).build().show();
             }
         });
 
@@ -242,7 +268,7 @@ public class SRO_receipt extends AppCompatActivity {
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
 
-                        date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        date.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
 
                     }
                 }, mYear, mMonth, mDay);

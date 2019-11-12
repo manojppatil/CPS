@@ -1,11 +1,13 @@
 package com.bits.cps;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.bits.cps.Helper.DialogBox;
 import com.bits.cps.Helper.L;
 import com.bits.cps.Helper.Routes;
+import com.bits.cps.Helper.SharedPreferencesWork;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -28,10 +31,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
@@ -41,12 +43,20 @@ public class AssignTask extends AppCompatActivity {
     EditText client_name, client_contact, client_email, client_address, client_meeting_time, client_amount, client_remark;
     private int inserted_id;
     Context context;
+    String format;
+    HashMap ssid;
+    String tl_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assign_task);
         setTitle("Assign Task");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3a3dff")));
+        SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(AssignTask.this);
+        ssid = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "id");
+        tl_id = ssid.get("id").toString();
         emp_spinner = findViewById(R.id.select_emp);
         client_name = findViewById(R.id.client_name);
         client_contact = findViewById(R.id.client_contact);
@@ -79,6 +89,7 @@ public class AssignTask extends AppCompatActivity {
         requestParams.add("meeting_time", Meeting_time);
         requestParams.add("amount", Amount);
         requestParams.add("remark", Remark);
+        requestParams.add("team_leader_id",tl_id);
         requestParams.add("tbname", "task");
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
@@ -147,7 +158,18 @@ public class AssignTask extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                new SmartDialogBuilder(AssignTask.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                smartDialog.dismiss();
+                                dialog.dismiss();
+                            }
+                        }).build().show();
             }
         });
     }
@@ -156,7 +178,7 @@ public class AssignTask extends AppCompatActivity {
         RequestParams requestParams = new RequestParams();
         requestParams.add("tbname", "user");
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        asyncHttpClient.post(Routes.selectAll, requestParams, new AsyncHttpResponseHandler() {
+        asyncHttpClient.post(Routes.selectAllEmployee, requestParams, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String string = new String(responseBody);
@@ -182,15 +204,23 @@ public class AssignTask extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                new SmartDialogBuilder(AssignTask.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                smartDialog.dismiss();
+                            }
+                        }).build().show();
             }
         });
 
     }
 
     public void selectTime(View view) {
-
-
         final EditText time = (EditText) view;
         // Get Current Time
         final Calendar c = Calendar.getInstance();
@@ -200,14 +230,21 @@ public class AssignTask extends AppCompatActivity {
         // Launch Time Picker Dialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
-
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm aa");
-                        String formattedDate = dateFormat.format(new Date()).toString();
-                        System.out.println(formattedDate);
-                        time.setText(formattedDate+"");
+                        if (hourOfDay == 0) {
+                            hourOfDay += 12;
+                            format = "AM";
+                        } else if (hourOfDay == 12) {
+                            format = "PM";
+                        } else if (hourOfDay > 12) {
+                            hourOfDay -= 12;
+                            format = "PM";
+                        } else {
+                            format = "AM";
+                        }
+                        time.setText(hourOfDay + ":" + minute + format);
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();

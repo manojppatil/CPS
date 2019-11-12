@@ -5,15 +5,12 @@ import android.os.Bundle;
 
 import com.bits.cps.Helper.Routes;
 import com.bits.cps.Helper.SharedPreferencesWork;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import android.view.View;
 
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -22,10 +19,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.Menu;
+import java.util.HashMap;
+
+import am.appwise.components.ni.NoInternetDialog;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    NoInternetDialog noInternetDialog;
+    HashMap ssname, ssemail;
+    String username, useremail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +35,22 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        setTitle("CPS ADMIN");
+        SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(MainActivity.this);
+        ssname = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "name");
+        ssemail = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "userid");
+        username = ssname.get("name").toString();
+        useremail = ssemail.get("userid").toString();
+        noInternetDialog = new NoInternetDialog.Builder(MainActivity.this).build();
+        noInternetDialog.setCancelable(true);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.profile_name);
+        txtProfileName.setText(username);
+        TextView txtUseremail = navigationView.getHeaderView(0).findViewById(R.id.user_email);
+        txtUseremail.setText(useremail);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -71,9 +86,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_inbox) {
             Intent intent = new Intent(MainActivity.this, InboxActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_reports) {
-            Intent intent = new Intent(MainActivity.this, WebviewActivity.class);
-            startActivity(intent);
         } else if (id == R.id.nav_logout) {
             if (new SharedPreferencesWork(MainActivity.this).eraseData(Routes.sharedPrefForLogin)) {
                 Intent intent = new Intent(this, LoginActivity.class);
@@ -85,5 +97,11 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        noInternetDialog.onDestroy();
     }
 }

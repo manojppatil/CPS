@@ -8,7 +8,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 1
+        versionCode 5
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,8 +42,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.ViksaaSkool:AwesomeSplash:v1.0.0'
     implementation 'com.github.TecOrb-Developers:SmartAlertDialog:v1.0'
-    implementation 'com.github.p32929:AndroidEasySQL-Library:1.4.0'
     implementation 'am.appwise.components:NoInternetDialog:1.1.3'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 
     implementation 'androidx.work:work-runtime:2.0.1'

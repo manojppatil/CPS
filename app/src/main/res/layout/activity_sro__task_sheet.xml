@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TaskSheet">
+    tools:context=".SRO_TaskSheet">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,18 +18,8 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:gravity="center"-->
-<!--                android:text="Task Sheet"-->
-<!--                android:background="@drawable/border2"-->
-<!--                android:textColor="@android:color/black"-->
-<!--                android:textSize="25dp" />-->
-
             <TextView
-                android:id="@+id/show_name"
+                android:id="@+id/show_sro_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
@@ -38,21 +28,21 @@
                 android:textSize="25dp" />
 
             <TextView
-                android:id="@+id/show_add"
+                android:id="@+id/show_sro_office"
                 android:textSize="18dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:text="Address" />
+                android:text="office" />
 
             <TextView
-                android:id="@+id/show_contact"
+                android:id="@+id/show_sro_bank"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
-                android:text="Contact"
+                android:text="bank"
                 android:textSize="18dp" />
 
             <LinearLayout
@@ -68,7 +58,7 @@
                     android:textSize="20dp" />
 
                 <TextView
-                    android:id="@+id/task_amount"
+                    android:id="@+id/sro_sheet_amount"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="number"
@@ -86,32 +76,11 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Remark"
-                    android:textSize="20dp" />
-
-                <EditText
-                    android:id="@+id/task_remark"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="text"
-                    android:textColor="@android:color/black"
-                    android:textSize="25dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
                     android:text="Task Status"
                     android:textSize="20dp" />
 
                 <Spinner
-                    android:id="@+id/task_status"
+                    android:id="@+id/sro_status"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textSize="20dp" />
@@ -124,7 +93,7 @@
                 android:background="@drawable/blue_style"
                 android:textSize="20dp"
                 android:textStyle="bold"
-                android:onClick="task_sheet"
+                android:onClick="sro_task_sheet"
                 android:fontFamily="@font/font_game"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

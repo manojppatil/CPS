@@ -16,10 +16,14 @@
             android:id="@+id/tl_show_task"
             android:icon="@drawable/ic_showtask"
             android:title="@string/menu_task" />
-        <!--<item-->
-            <!--android:id="@+id/nav_tools"-->
-            <!--android:icon="@drawable/ic_reports"-->
-            <!--android:title="@string/menu_tools" />-->
+        <item
+            android:id="@+id/tl_stamp_duty"
+            android:icon="@drawable/ic_stamp_duty"
+            android:title="@string/stamp" />
+        <item
+            android:id="@+id/tl_sro_receipt"
+            android:icon="@drawable/ic_sro"
+            android:title="@string/File_sro" />
     </group>
 
     <item android:title="Communicate">

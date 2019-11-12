@@ -14,7 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
-import com.bits.cps.Adapter.SROAdapter;
+import com.bits.cps.Adapter.AdminTaskAdapter;
 import com.bits.cps.Helper.DialogBox;
 import com.bits.cps.Helper.L;
 import com.bits.cps.Helper.Routes;
@@ -30,50 +30,36 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
-public class ShowSRO_task extends AppCompatActivity {
-    HashMap name, ssid, loginid;
-    String username, id;
+public class ShoeTasktoTL extends AppCompatActivity {
     ArrayList arr = new ArrayList();
     RequestParams requestParams = new RequestParams();
     Context context;
-    String currentDateandTime;
-    String addressLines;
-    private int inserted_id;
-    String login_id;
-    String currentDate;
+    HashMap ssid;
+    String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_sro_task);
+        setContentView(R.layout.activity_shoe_taskto_tl);
+        setTitle("Show Task");
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3a3dff")));
-        SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(ShowSRO_task.this);
+        SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(ShoeTasktoTL.this);
         ssid = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "id");
-        name = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "name");
         id = ssid.get("id").toString();
-        username = name.get("name").toString();
-        SimpleDateFormat cd = new SimpleDateFormat("yyyy-MM-dd");
-        currentDate = cd.format(new Date());
-        String value = id + " " + username;
-        L.L(value+"-------------vakl");
-        requestParams.add("column", "SRO_date");
-        requestParams.add("date",currentDate);
-        requestParams.add("id", value);
-        requestParams.add("column2","emp_name");
-        requestParams.add("tbname", "task");
 
+        requestParams.add("tbname", "task");
+        requestParams.add("column", "team_leader_id");
+        requestParams.add("id", id);
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        asyncHttpClient.post(Routes.selectTaskByDate, requestParams, new AsyncHttpResponseHandler() {
-            AlertDialog dialog = new SpotsDialog(ShowSRO_task.this, R.style.Custom);
+        asyncHttpClient.post(Routes.selectOneByColumn, requestParams, new AsyncHttpResponseHandler() {
+            AlertDialog dialog = new SpotsDialog(ShoeTasktoTL.this, R.style.Custom);
 
             @Override
             public void onStart() {
@@ -98,17 +84,19 @@ public class ShowSRO_task extends AppCompatActivity {
                                 if (jo != null) {
                                     hashMap.put("id", jo.get("id").toString());
                                     hashMap.put("name", jo.get("client_name").toString());
-                                    hashMap.put("address", jo.get("SRO_office").toString());
-                                    hashMap.put("mobile", jo.get("bank_name").toString());
-                                    hashMap.put("meeting_time", jo.get("SRO_date").toString());
-                                    hashMap.put("amount", jo.get("SRO_payment").toString());
+                                    hashMap.put("address", jo.get("client_address").toString());
+                                    hashMap.put("mobile", jo.get("client_contact").toString());
+                                    hashMap.put("email", jo.get("client_email").toString());
+                                    hashMap.put("username", jo.get("user_name").toString());
+                                    hashMap.put("meeting_time", jo.get("meeting_time").toString());
+                                    hashMap.put("amount", jo.get("amount").toString());
                                 }
                                 arr.add(hashMap);
                             }
-                            SROAdapter uadapter = new SROAdapter(arr, ShowSRO_task.this);
-                            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.sro_recycler);
+                            AdminTaskAdapter uadapter = new AdminTaskAdapter(arr, ShoeTasktoTL.this);
+                            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.tl_task_recycler);
                             recyclerView.setHasFixedSize(true);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(ShowSRO_task.this));
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ShoeTasktoTL.this));
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
                             recyclerView.setAdapter(uadapter);
                         } catch (JSONException e) {
@@ -116,7 +104,7 @@ public class ShowSRO_task extends AppCompatActivity {
                         }
 
                     } else {
-                        new DialogBox(ShowSRO_task.this, str).asyncDialogBox();
+                        new DialogBox(ShoeTasktoTL.this, str).asyncDialogBox();
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -125,8 +113,9 @@ public class ShowSRO_task extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                new SmartDialogBuilder(ShowSRO_task.this)
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
+                    error) {
+                new SmartDialogBuilder(ShoeTasktoTL.this)
                         .setTitle("Please Retry...")
                         .setSubTitle("Make sure your device has an active Internet Connection.")
                         .setCancalable(false)
@@ -134,19 +123,22 @@ public class ShowSRO_task extends AppCompatActivity {
                         .setPositiveButton("OK", new SmartDialogClickListener() {
                             @Override
                             public void onClick(SmartDialog smartDialog) {
-                                Intent intent = new Intent(ShowSRO_task.this, Employee_activity.class);
-                                startActivity(intent);
                                 smartDialog.dismiss();
+                                dialog.dismiss();
+                                Intent intent = new Intent(ShoeTasktoTL.this, TL_activity.class);
+                                startActivity(intent);
                             }
                         }).build().show();
+//                new DialogBox(ShoeTasktoTL.this, responseBody.toString());
             }
 
             @Override
             public void onRetry(int retryNo) {
-                dialog = ProgressDialog.show(ShowSRO_task.this, "none to say",
+                dialog = ProgressDialog.show(ShoeTasktoTL.this, "none to say",
                         "Saving.Please wait...", true);
             }
 
         });
+
     }
 }

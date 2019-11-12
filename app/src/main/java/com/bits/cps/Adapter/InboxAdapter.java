@@ -1,7 +1,6 @@
 package com.bits.cps.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bits.cps.R;
-import com.bits.cps.TaskSheet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +43,20 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
         viewHolder.ctotal.setText(ctotal);
         final String ptotal = hm.get("ptotal").toString();
         viewHolder.ptotal.setText(ptotal);
-        viewHolder.login.setText(hm.get("login_time").toString());
-        viewHolder.logout.setText(hm.get("logout_time").toString());
+        String login_time = hm.get("login_time").toString();
+        String logout_time = hm.get("logout_time").toString();
+        if (login_time != null && !login_time.isEmpty() && !login_time.equals("null")) {
+            viewHolder.login.setText(login_time);
+        } else {
+            viewHolder.login.setText("  ");
+        }
+
+        if (login_time != null && !login_time.isEmpty() && !login_time.equals("null")) {
+            viewHolder.logout.setText(logout_time);
+        } else {
+            viewHolder.logout.setText("  ");
+        }
+
 
         viewHolder.itemView.setTag(hm);
 

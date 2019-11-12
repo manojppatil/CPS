@@ -1,6 +1,5 @@
 package com.bits.cps;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +11,6 @@ import com.bits.cps.Helper.DialogBox;
 import com.bits.cps.Helper.L;
 import com.bits.cps.Helper.Routes;
 import com.bits.cps.Helper.SharedPreferencesWork;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;
 
@@ -38,6 +35,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -48,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import am.appwise.components.ni.NoInternetDialog;
 import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
@@ -59,16 +58,27 @@ public class Activity_do extends AppCompatActivity
     String login_id;
     private int inserted_id;
     Context context;
+    NoInternetDialog noInternetDialog;
+    String role;
+    HashMap ssname, ssemail;
+    String username, useremail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_do);
         setTitle("Data Entry Operator");
-
+        Intent roleintent = getIntent();
+        role = roleintent.getStringExtra("role");
+        L.L(role + "+++++++++++role");
+        noInternetDialog = new NoInternetDialog.Builder(Activity_do.this).build();
         SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(Activity_do.this);
         loginid = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "login_id");
         login_id = loginid.get("login_id").toString();
+        ssname = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "name");
+        ssemail = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "userid");
+        username = ssname.get("name").toString();
+        useremail = ssemail.get("userid").toString();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -76,6 +86,11 @@ public class Activity_do extends AppCompatActivity
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00c853")));
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        TextView txtProfileName = navigationView.getHeaderView(0).findViewById(R.id.do_nav_profile);
+        txtProfileName.setText(username);
+        TextView txtUseremail = navigationView.getHeaderView(0).findViewById(R.id.do_nav_email);
+        txtUseremail.setText(useremail);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -180,7 +195,7 @@ public class Activity_do extends AppCompatActivity
                                         inserted_id = Integer.parseInt(jo.getString("recentinsertedid"));
                                         new SmartDialogBuilder(Activity_do.this)
                                                 .setTitle("Thank You")
-                                                .setSubTitle("Have a Good night.")
+                                                .setSubTitle("You are Succesfully Logged out.")
                                                 .setCancalable(false)
                                                 .setNegativeButtonHide(true) //hide cancel button
                                                 .setPositiveButton("OK", new SmartDialogClickListener() {
@@ -191,6 +206,7 @@ public class Activity_do extends AppCompatActivity
                                                         hashMap.put("status", "deactive");
                                                         sharedPreferencesWork.insertOrReplace(hashMap, Routes.sharedPrefForLogin);
                                                         Intent intent = new Intent(Activity_do.this, PunchActivity.class);
+                                                        intent.putExtra("role", "Data Entry Operator");
                                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                         startActivity(intent);
                                                         finish();
@@ -220,13 +236,31 @@ public class Activity_do extends AppCompatActivity
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                        new SmartDialogBuilder(Activity_do.this)
+                                .setTitle("Please Retry...")
+                                .setSubTitle("Make sure your device has an active Internet Connection.")
+                                .setCancalable(false)
+                                .setNegativeButtonHide(true) //hide cancel button
+                                .setPositiveButton("OK", new SmartDialogClickListener() {
+                                    @Override
+                                    public void onClick(SmartDialog smartDialog) {
+                                        smartDialog.dismiss();
+                                        dialog.dismiss();
+                                    }
+                                }).build().show();
                     }
+
                 });
 
             }
         });
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        noInternetDialog.onDestroy();
     }
 
 }

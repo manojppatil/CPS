@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.bits.cps.Activity_do;
 import com.bits.cps.LoginActivity;
 import com.bits.cps.MainActivity;
 import com.bits.cps.PunchActivity;
-import com.bits.cps.TL_activity;
 import com.bits.cps.UserActivity;
 
 import java.util.HashMap;
@@ -84,13 +82,13 @@ public class SharedPreferencesWork {
                 homeIntent.putExtra("userid", id);
                 ctx.startActivity(homeIntent);
 
-            } else if (!id.equals(null) && role.equals("Team Leader")) {
+            } else if (!id.equals(null) && role.equals("team_leader")) {
                 Intent homeIntent = new Intent(ctx, PunchActivity.class);
                 homeIntent.putExtra("role","Team Leader");
                 homeIntent.putExtra("userid", id);
                 ctx.startActivity(homeIntent);
 
-            } else if (!id.equals(null) && role.equals("Data Entry Operator")) {
+            } else if (!id.equals(null) && role.equals("data_operator")) {
                 Intent homeIntent = new Intent(ctx, PunchActivity.class);
                 homeIntent.putExtra("role","Data Entry Operator");
                 homeIntent.putExtra("userid", id);

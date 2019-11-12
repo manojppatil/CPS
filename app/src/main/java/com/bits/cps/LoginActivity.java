@@ -19,6 +19,9 @@ import com.bits.cps.Helper.SharedPreferencesWork;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.rahman.dialog.Activity.SmartDialog;
+import com.rahman.dialog.ListenerCallBack.SmartDialogClickListener;
+import com.rahman.dialog.Utilities.SmartDialogBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(LoginActivity.this);
         sharedPreferencesWork.checkForLogin();
         noInternetDialog = new NoInternetDialog.Builder(LoginActivity.this).build();
-
         button = findViewById(R.id.login_button);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
@@ -101,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                                     hm.put("userid", user);
                                     hm.put("password", pass);
                                     hm.put("status", "deactivate");
+                                    hm.put("login_date", "");
                                     hm.put("role", jo.getString("role"));
                                     hm.put("id", jo.getString("userid"));
                                     hm.put("name", jo.getString("name"));
@@ -120,14 +123,14 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                         Toast.makeText(LoginActivity.this, "Employee Logged in", Toast.LENGTH_SHORT).show();
                                     }
-                                    if (jo.getString("role").equals("Team Leader")) {
+                                    if (jo.getString("role").equals("team_leader")) {
                                         Intent employee = new Intent(LoginActivity.this, PunchActivity.class);
                                         employee.putExtra("role", "Team Leader");
                                         startActivity(employee);
                                         finish();
                                         Toast.makeText(LoginActivity.this, "Punch Your Attendance Here", Toast.LENGTH_SHORT).show();
                                     }
-                                    if (jo.getString("role").equals("Data Entry Operator")) {
+                                    if (jo.getString("role").equals("data_operator")) {
                                         Intent employee = new Intent(LoginActivity.this, PunchActivity.class);
                                         employee.putExtra("role", "Data Entry Operator");
                                         startActivity(employee);
@@ -152,8 +155,18 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        new DialogBox(LoginActivity.this, responseBody.toString());
-
+                        new SmartDialogBuilder(LoginActivity.this)
+                                .setTitle("Please Retry...")
+                                .setSubTitle("Make sure your device has an active Internet Connection.")
+                                .setCancalable(false)
+                                .setNegativeButtonHide(true) //hide cancel button
+                                .setPositiveButton("OK", new SmartDialogClickListener() {
+                                    @Override
+                                    public void onClick(SmartDialog smartDialog) {
+                                        smartDialog.dismiss();
+                                        dialog.dismiss();
+                                    }
+                                }).build().show();
                     }
 
                     @Override
@@ -171,6 +184,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        noInternetDialog.onDestroy();
+        if (noInternetDialog != null) {
+            noInternetDialog.onDestroy();
+            noInternetDialog = null;
+        }
+
     }
 }

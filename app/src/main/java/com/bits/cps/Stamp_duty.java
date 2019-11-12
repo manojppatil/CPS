@@ -1,10 +1,12 @@
 package com.bits.cps;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -32,7 +34,6 @@ import cz.msebera.android.httpclient.Header;
 import dmax.dialog.SpotsDialog;
 
 public class Stamp_duty extends AppCompatActivity {
-    Spinner stamp_status;
     Spinner stamp_client;
     CheckBox stamp100, stamp300, stamp1000;
     String str_100, str_300, str_1000;
@@ -44,20 +45,13 @@ public class Stamp_duty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stamp_duty);
         setTitle("Stamp Duty");
-        stamp_status = findViewById(R.id.stampduty_status);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#34eb49")));
         stamp_client = findViewById(R.id.stamp_client);
         stamp100 = findViewById(R.id.stamp_100);
         stamp300 = findViewById(R.id.stamp_300);
         stamp1000 = findViewById(R.id.stamp_1000);
 
-        ArrayList<String> arrayList1 = new ArrayList<>();
-        arrayList1.add("Completed");
-        arrayList1.add("Pending");
-        arrayList1.add("Cancelled");
-
-        ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrayList1);
-        arrayAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        stamp_status.setAdapter(arrayAdapter1);
         getTaskID();
     }
 
@@ -132,7 +126,17 @@ public class Stamp_duty extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                    new SmartDialogBuilder(Stamp_duty.this)
+                            .setTitle("Please Retry...")
+                            .setSubTitle("Make sure your device has an active Internet Connection.")
+                            .setCancalable(false)
+                            .setNegativeButtonHide(true) //hide cancel button
+                            .setPositiveButton("OK", new SmartDialogClickListener() {
+                                @Override
+                                public void onClick(SmartDialog smartDialog) {
+                                    smartDialog.dismiss();
+                                }
+                            }).build().show();
                 }
             });
         }
@@ -202,7 +206,17 @@ public class Stamp_duty extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                    new SmartDialogBuilder(Stamp_duty.this)
+                            .setTitle("Please Retry...")
+                            .setSubTitle("Make sure your device has an active Internet Connection.")
+                            .setCancalable(false)
+                            .setNegativeButtonHide(true) //hide cancel button
+                            .setPositiveButton("OK", new SmartDialogClickListener() {
+                                @Override
+                                public void onClick(SmartDialog smartDialog) {
+                                    smartDialog.dismiss();
+                                }
+                            }).build().show();
                 }
             });
         }
@@ -272,7 +286,17 @@ public class Stamp_duty extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                    new SmartDialogBuilder(Stamp_duty.this)
+                            .setTitle("Please Retry...")
+                            .setSubTitle("Make sure your device has an active Internet Connection.")
+                            .setCancalable(false)
+                            .setNegativeButtonHide(true) //hide cancel button
+                            .setPositiveButton("OK", new SmartDialogClickListener() {
+                                @Override
+                                public void onClick(SmartDialog smartDialog) {
+                                    smartDialog.dismiss();
+                                }
+                            }).build().show();
                 }
             });
         }

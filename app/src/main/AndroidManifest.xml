@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.bits.cps">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -17,29 +20,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoInternetTheme">
-        <activity android:name=".PunchActivity"></activity>
-        <activity android:name=".WebviewActivity" />
-        <activity android:name=".ShowSRO_task" />
+        <activity android:name="com.bits.cps.ShoeTasktoTL"></activity>
+        <activity android:name="com.bits.cps.SRO_TaskSheet" />
+        <activity android:name="com.bits.cps.PunchActivity" />
+        <activity android:name="com.bits.cps.ShowSRO_task" />
         <activity
-            android:name=".Employee_activity"
+            android:name="com.bits.cps.Employee_activity"
             android:label="@string/title_activity_employee_activity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Stamp_duty" />
-        <activity android:name=".SRO_receipt" />
+        <activity android:name="com.bits.cps.Stamp_duty" />
+        <activity android:name="com.bits.cps.SRO_receipt" />
         <activity
-            android:name=".Activity_do"
+            android:name="com.bits.cps.Activity_do"
             android:label="@string/title_activity_do"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Show_Attendance" />
-        <activity android:name=".ProfilePageTL" />
+        <activity android:name="com.bits.cps.Show_Attendance" />
+        <activity android:name="com.bits.cps.ProfilePageTL" />
         <activity
-            android:name=".TL_activity"
+            android:name="com.bits.cps.TL_activity"
             android:label="@string/title_activity_tl_activity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ShowTasktoAdmin" />
-        <activity android:name=".TaskSheet" />
+        <activity android:name="com.bits.cps.ShowTasktoAdmin" />
+        <activity android:name="com.bits.cps.TaskSheet" />
         <activity
-            android:name=".SplashScreen"
+            android:name="com.bits.cps.SplashScreen"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,30 +53,22 @@
         </activity>
 
         <service
-            android:name=".GPSTracker"
+            android:name="com.bits.cps.GPSTracker"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ShowAssignTaskByUser" />
-        <activity android:name=".UserActivity" />
-        <activity android:name=".InboxActivity" />
-        <activity android:name=".AssignTask" />
-        <activity android:name=".CreateID" />
+        <activity android:name="com.bits.cps.ShowAssignTaskByUser" />
+        <activity android:name="com.bits.cps.UserActivity" />
+        <activity android:name="com.bits.cps.InboxActivity" />
+        <activity android:name="com.bits.cps.AssignTask" />
+        <activity android:name="com.bits.cps.CreateID" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.bits.cps.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.bits.cps.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

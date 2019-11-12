@@ -3,6 +3,7 @@ package com.bits.cps;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -46,8 +47,6 @@ import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
-import p32929.androideasysql_library.Column;
-import p32929.androideasysql_library.EasyDB;
 
 public class MyWorker extends Worker {
 
@@ -86,10 +85,16 @@ public class MyWorker extends Worker {
     private int inserted_id;
     HashMap ssid;
     String id;
+//    DatabaseHelper helper;
+//    SQLiteDatabase db;
 
     public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         mContext = context;
+
+//        helper = new DatabaseHelper(mContext);
+//        db = helper.getWritableDatabase();
+
         SharedPreferencesWork sharedPreferencesWork = new SharedPreferencesWork(mContext);
         ssid = sharedPreferencesWork.checkAndReturn(Routes.sharedPrefForLogin, "id");
         id = ssid.get("id").toString();
@@ -112,12 +117,6 @@ public class MyWorker extends Worker {
         Date date = c.getTime();
         String formattedDate = dateFormat.format(date);
 
-        final EasyDB easyDB = EasyDB.init(mContext, "CPS") // "TEST" is the name of the DATABASE
-                .setTableName("location")  // You can ignore this line if you want
-                .addColumn(new Column("user_id", new String[]{"text", "unique"}))
-                .addColumn(new Column("locality", new String[]{"text", "not null"}))
-                .addColumn(new Column("date_time", new String[]{"text"}))
-                .doneTableColumn();
         try {
             final Date currentDate = dateFormat.parse(formattedDate);
             Date startDate = dateFormat.parse(DEFAULT_START_TIME);
@@ -132,7 +131,7 @@ public class MyWorker extends Worker {
                     }
                 };
 
-                final LocationRequest mLocationRequest = new LocationRequest();
+                LocationRequest mLocationRequest = new LocationRequest();
                 mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
                 mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
                 mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -152,7 +151,7 @@ public class MyWorker extends Worker {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                             CharSequence name = mContext.getString(R.string.app_name);
                                             String description = mContext.getString(R.string.app_name);
-                                            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                                            int importance = NotificationManager.IMPORTANCE_HIGH;
                                             NotificationChannel channel = new NotificationChannel(mContext.getString(R.string.app_name), name, importance);
                                             channel.setDescription(description);
                                             // Register the channel with the system; you can't change the importance
@@ -175,6 +174,9 @@ public class MyWorker extends Worker {
 
                                         if (NetworkConnection.checkNetworkConnection(mContext)) {
                                             Log.d(TAG, "onConnected");
+//                                            L.L("readstart....-------");
+//                                            readData();
+//                                            L.L("readend----------------++++");
                                             RequestParams requestParams1 = new RequestParams();
                                             requestParams1.add("locality", getCompleteAddressString(mLocation.getLatitude(), mLocation.getLongitude()));
                                             requestParams1.add("user_id", id);
@@ -224,12 +226,11 @@ public class MyWorker extends Worker {
                                                 }
                                             });
                                         } else {
-                                            boolean done = easyDB.addData("user_id", id)
-                                                    .addData("locality", getCompleteAddressString(mLocation.getLatitude(), mLocation.getLongitude()))
-                                                    .addData("date_time", currentDateandTime)
-                                                    .doneDataAdding();
                                             new DialogBox(mContext, "Check your network connnection").asyncDialogBox();
                                             Log.d(TAG, "onDisconnected");
+
+                                            //insert values to sqlite database
+//                                            AddData(id, getCompleteAddressString(mLocation.getLatitude(), mLocation.getLongitude()), currentDateandTime, db);
                                         }
                                         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                                     } else {
@@ -277,5 +278,37 @@ public class MyWorker extends Worker {
         return strAdd;
     }
 
+//    public void AddData(String User_id, String locality, String date_time, SQLiteDatabase sqLiteDatabase) {
+//
+//        boolean insertData = helper.addData(User_id, locality, date_time, sqLiteDatabase);
+//
+//        if (insertData == true) {
+//            Toast.makeText(mContext, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+//        } else {
+//            Toast.makeText(mContext, "Something went wrong :(.", Toast.LENGTH_LONG).show();
+//        }
+//    }
+
+//    public void readData() {
+//        Cursor cursor = db.rawQuery("SELECT * FROM location_data", new String[]{});
+//        if (cursor != null) {
+//            L.L("first------------");
+//            cursor.moveToFirst();
+//        }
+//        StringBuilder builder = new StringBuilder();
+//        do {
+//            L.L("second+++++++++++");
+//            String user_id = cursor.getString(0);
+//            String locality = cursor.getString(1);
+//            String date_time = cursor.getString(2);
+//            L.L("third-----------");
+//            builder.append("User_id - " + user_id + "Locality - " + locality + "Date_time -" + date_time);
+//            L.L(builder + "-----------stringghag");
+//            L.L("fourth++++++++++");
+//
+//        } while (cursor.moveToNext());
+//        L.L("fifth--------------");
+//
+//    }
 
 }

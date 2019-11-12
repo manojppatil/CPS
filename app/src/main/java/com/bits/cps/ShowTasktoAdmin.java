@@ -1,5 +1,6 @@
 package com.bits.cps;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,17 +9,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import com.bits.cps.Adapter.AdminTaskAdapter;
-import com.bits.cps.Adapter.taskAdapter;
 import com.bits.cps.Helper.DialogBox;
 import com.bits.cps.Helper.L;
 import com.bits.cps.Helper.Routes;
-import com.bits.cps.Helper.SharedPreferencesWork;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.rahman.dialog.Activity.SmartDialog;
+import com.rahman.dialog.ListenerCallBack.SmartDialogClickListener;
+import com.rahman.dialog.Utilities.SmartDialogBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +44,9 @@ public class ShowTasktoAdmin extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_taskto_admin);
-
+        setTitle("Show Task");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3a3dff")));
         requestParams.add("tbname", "task");
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
@@ -101,7 +107,18 @@ public class ShowTasktoAdmin extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
                     error) {
-                new DialogBox(ShowTasktoAdmin.this, responseBody.toString());
+                new SmartDialogBuilder(ShowTasktoAdmin.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                smartDialog.dismiss();
+                            }
+                        }).build().show();
+//                new DialogBox(ShowTasktoAdmin.this, responseBody.toString());
             }
 
             @Override

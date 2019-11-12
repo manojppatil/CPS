@@ -4,11 +4,15 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +25,9 @@ import com.bits.cps.Helper.Routes;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.rahman.dialog.Activity.SmartDialog;
+import com.rahman.dialog.ListenerCallBack.SmartDialogClickListener;
+import com.rahman.dialog.Utilities.SmartDialogBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,11 +45,13 @@ public class InboxActivity extends AppCompatActivity {
     Context context;
     private int inserted_id;
     EditText inboxdate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox);
-
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3a3dff")));
         inboxdate = findViewById(R.id.inbox_date);
 
         RequestParams requestParams = new RequestParams();
@@ -60,7 +69,7 @@ public class InboxActivity extends AppCompatActivity {
                 dialog.dismiss();
                 String str = new String(responseBody);
 //                str = str.replace("<br>", "\n");
-                L.L(str+"");
+                L.L(str + "");
                 JSONArray jr = null;
                 JSONObject jo = null;
                 try {
@@ -102,7 +111,19 @@ public class InboxActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
                     error) {
-                new DialogBox(InboxActivity.this, responseBody.toString());
+                new SmartDialogBuilder(InboxActivity.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                Intent intent = new Intent(InboxActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                smartDialog.dismiss();
+                            }
+                        }).build().show();
             }
 
             @Override
@@ -137,10 +158,10 @@ public class InboxActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    public void sendDate(View view){
+    public void sendDate(View view) {
         String inbox_date = inboxdate.getText().toString();
         RequestParams requestParams = new RequestParams();
-        requestParams.add("search_date",inbox_date);
+        requestParams.add("search_date", inbox_date);
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         asyncHttpClient.post(Routes.multipleTablesData, requestParams, new AsyncHttpResponseHandler() {
@@ -156,7 +177,7 @@ public class InboxActivity extends AppCompatActivity {
                 dialog.dismiss();
                 String str = new String(responseBody);
 //                str = str.replace("<br>", "\n");
-                L.L(str+"");
+                L.L(str + "");
                 JSONArray jr = null;
                 JSONObject jo = null;
                 try {
@@ -198,7 +219,17 @@ public class InboxActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
                     error) {
-                new DialogBox(InboxActivity.this, responseBody.toString());
+                new SmartDialogBuilder(InboxActivity.this)
+                        .setTitle("Please Retry...")
+                        .setSubTitle("Make sure your device has an active Internet Connection.")
+                        .setCancalable(false)
+                        .setNegativeButtonHide(true) //hide cancel button
+                        .setPositiveButton("OK", new SmartDialogClickListener() {
+                            @Override
+                            public void onClick(SmartDialog smartDialog) {
+                                smartDialog.dismiss();
+                            }
+                        }).build().show();
             }
 
             @Override

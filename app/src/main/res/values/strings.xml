@@ -59,4 +59,17 @@
     <string name="menu_send">Send</string>
     <string name="title_activity_do">Activity_do</string>
     <string name="title_activity_employee_activity">Employee_activity</string>
+
+    <string-array name="role_names">
+        <item>Select Role</item>
+        <item>Team Leader</item>
+        <item>Field Executive</item>
+        <item>Data Entry Operator</item>
+    </string-array>
+
+    <string-array name="role_Code">
+        <item>team_leader</item>
+        <item>employee</item>
+        <item>data_operator</item>
+    </string-array>
 </resources>
